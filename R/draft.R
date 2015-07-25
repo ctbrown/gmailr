@@ -48,7 +48,7 @@ drafts = function(num_results = NULL, page_token = NULL, user_id = 'me'){
 #' @examples
 #' \dontrun{
 #' create_draft(mime(from="you@@me.com", to="any@@one.com",
-#'                           subject='hello", "how are you doing?"))
+#'                           subject="hello", "how are you doing?"))
 #' }
 create_draft = function(mail, user_id = 'me', type=c("multipart", "media", "resumable")) {
   mail = if(!is.character(mail)) as.character(mail) else mail
