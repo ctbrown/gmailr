@@ -13,9 +13,11 @@
 #' }
 message = function(id, user_id = 'me', format=c("full", "minimal", "raw")) {
   format = match.arg(format)
-  req = GET(gmail_path(user_id, "messages", id),
-            query = list(format=format),
-            config(token = get_token()))
+  req = GET(
+    gmail_path(user_id, "messages", id),
+    query = list(format=format),
+    config( token = get_token() ) 
+  )
   stop_for_status(req)
   structure(content(req, "parsed"), class='gmail_message')
 }
@@ -249,18 +251,33 @@ import_message = function(mail, user_id = 'me', label_ids = NULL, type=c("multip
 #' @export
 #' @examples
 #' \dontrun{
-#' send_message(mime(from="you@@me.com", to="any@@one.com",
-#'                           subject='hello", "how are you doing?"))
+#'   send_message( 
+#'     
+#'     
+#'   )
 #' }
-send_message = function(mail, user_id = 'me', label_ids = NULL, type=c("multipart", "media", "resumable")) {
-  mail = if(!is.character(mail)) as.character(mail) else mail
-  type = match.arg(type)
+#' @import httr 
 
-  req = POST(gmail_path(user_id, "messages", "send"),
-            query = list(uploadType=type),
-            body = jsonlite::toJSON(auto_unbox=TRUE,
-                          list(raw=base64url_encode(mail))),
-             add_headers('Content-Type' = 'application/json'), config(token = get_token()))
-  stop_for_status(req)
-  invisible(req)
-}
+send_message = 
+  function( 
+    mail, user_id = 'me', label_ids = NULL, type=c("multipart", "media", "resumable") 
+  ) {
+  
+      mail = if( ! is.character(mail) ) as.character(mail) 
+      type = match.arg(type)
+    
+      req = httr::POST(
+        url   =  gmail_path( user_id, "messages", "send" ),
+        query = list( uploadType=type ),
+        body  = jsonlite::toJSON( 
+          auto_unbox = FALSE,
+          list( raw=base64url_encode(mail) ) 
+        ),
+        add_headers('Content-Type' = 'application/json'), 
+        config( token = get_token())
+      )
+      
+      stop_for_status(req)
+      invisible(req)
+      
+  }

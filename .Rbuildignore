@@ -10,3 +10,5 @@ TODO.md
 ^NEWS.md$
 ^.*gz$
 ^travis-tool\.sh$
+^.*\.Rproj$
+^\.Rproj\.user$

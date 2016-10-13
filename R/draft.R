@@ -50,15 +50,21 @@ drafts = function(num_results = NULL, page_token = NULL, user_id = 'me'){
 #' create_draft(mime(from="you@@me.com", to="any@@one.com",
 #'                           subject="hello", "how are you doing?"))
 #' }
-create_draft = function(mail, user_id = 'me', type=c("multipart", "media", "resumable")) {
-  mail = if(!is.character(mail)) as.character(mail) else mail
+create_draft = function( 
+  mail, user_id = 'me', type=c("multipart", "media", "resumable")
+) {
+  
+  mail = if( !is.character(mail) ) as.character(mail) else mail
   type = match.arg(type)
-  req = POST(gmail_path(user_id, "drafts"),
-            query = list(uploadType=type),
-            body = jsonlite::toJSON(auto_unbox=TRUE,
-                          list(
-                               message=list(raw=base64url_encode(mail)))),
-             add_headers('Content-Type' = 'application/json'), config(token = get_token()))
+  req = POST( 
+     gmail_path(user_id, "drafts"),
+     query = list(uploadType=type),
+     body = jsonlite::toJSON(
+       auto_unbox=TRUE,
+       list( message = list( raw=base64url_encode(mail) ))
+     ),
+     add_headers('Content-Type' = 'application/json'), config(token = get_token())
+  )
   stop_for_status(req)
   structure(content(req, "parsed"), class='gmail_draft')
 }
@@ -73,15 +79,20 @@ create_draft = function(mail, user_id = 'me', type=c("multipart", "media", "resu
 #' @export
 #' @examples
 #' \dontrun{
-#' send_draft(12345)
+#'   send_draft(12345)
 #' }
-send_draft = function(id, upload_type = c("media", "multipart", "resumable"), user_id = 'me') {
+send_draft = function( 
+  id, upload_type = c("media", "multipart", "resumable"), user_id = 'me'
+) {
+  browser()
   upload_type = match.arg(upload_type)
-  req = POST(gmail_path(user_id, "drafts"),
-             query=rename(upload_type),
-             body=c("id"=id),
-             encode="json",
-            config(token = get_token()))
+  req = POST(
+    url    = gmail_path(user_id, "drafts") ,  # "https://www.googleapis.com/gmail/v1/users/me/drafts"
+    query  = rename(upload_type) ,            # "media"
+    body   = c("id"=id),                      
+    encode = "json",
+    config( token = get_token() )
+  )
   stop_for_status(req)
   invisible(content(req, "parsed"))
 }
